@@ -34,14 +34,16 @@ case "${1:-}" in
   ;;
 esac
 
-k8s_leader_lease_name=${K8S_LEADER_LEASE_NAME:-}
+export K8S_LEADER_LEASE_NAME=${K8S_LEADER_LEASE_NAME:-}
+export K8S_LEADER_NAMESPACE=${K8S_LEADER_NAMESPACE:-}
 
-if [[ "$k8s_leader_lease_name" != "" ]]
+
+if [[ "$K8S_LEADER_LEASE_NAME" != "" && "$K8S_LEADER_NAMESPACE" != "" ]]
 then
   (
     echo "$(date) started"
     while true; do
-      k8s-leader  --lease-name "${k8s_leader_lease_name}" --lease-namespace "$NAMESPACE" --identity "$HOSTNAME" || true
+      k8s-leader  --lease-name "${K8S_LEADER_LEASE_NAME}" --lease-namespace "$K8S_LEADER_NAMESPACE" --identity "$HOSTNAME" || true
       echo "$(date) exited"
       sleep 1
     done
@@ -50,7 +52,7 @@ then
 
   echo """
 
-  TRYING TO ACQUIRE LEADERSHIP WITH k8s-leader with lease name '${k8s_leader_lease_name} in namespace '${NAMESPACE}' using identity '${HOSTNAME}' ..."
+  TRYING TO ACQUIRE LEADERSHIP WITH k8s-leader with lease name '${K8S_LEADER_LEASE_NAME}' in namespace '${K8S_LEADER_NAMESPACE}' using identity '${HOSTNAME}' ..."
   while true; do
     if [[ -f /tmp/k8s-leader ]]; then
       leader_hostname=$(cat /tmp/k8s-leader)
