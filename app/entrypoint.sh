@@ -60,6 +60,8 @@ while true; do
 done
 echo "...WE ARE THE LEADER!"
 
-echo "starting chisel"
+[[ "${PORT:-}" = "" ]] && export PORT=9090
+
+echo "starting chisel in port '${PORT}'"
 
 chisel server --port 9090 --reverse --keepalive 5s & wait
